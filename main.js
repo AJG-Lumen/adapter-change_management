@@ -71,14 +71,14 @@ function get(serviceNowTable, callback) {
 
 /**
  * @function post
- * @description Call the ServiceNow POST API.
+ * @description Call the ServiceNow GET API.
  *
  * @param {string} serviceNowTable - The table target of the ServiceNow table API.
  * @param {iapCallback} callback - Callback a function.
  * @param {*} callback.data - The API's response. Will be an object if sunnyday path.
  *   Will be HTML text if hibernating instance.
  * @param {error} callback.error - The error property of callback.
-*/
+ */
 function post(serviceNowTable, callback) {
 
   // Initialize return arguments for callback
@@ -98,9 +98,8 @@ function post(serviceNowTable, callback) {
       pass: options.password,
     },
     baseUrl: options.url,
-    uri: '/api/now/table/${serviceNowTable}',
+    uri: `/api/now/table/${serviceNowTable}`,
   };
-}
 
   // Send Request to ServiceNow.
   // We are passing variable requestOptions for the first argument.
