@@ -146,14 +146,7 @@ class ServiceNowAdapter extends EventEmitter {
    *   handles the response.
    */
   getRecord(callback) {
-      this.connector.get((data, error) => {
-    if (error) {
-      console.error(`\nError returned from GET request:\n${JSON.stringify(error)}`);
-      return callback(error);
-    }
-    console.log(`\nResponse returned from GET request:\n${JSON.stringify(data)}`);
-    return callback(data);
-      });
+      this.connector.get(callback);
     /**
      * Write the body for this function.
      * The function is a wrapper for this.connector's get() method.
@@ -172,14 +165,7 @@ class ServiceNowAdapter extends EventEmitter {
    *   handles the response.
    */
   postRecord(callback) {
-      this.connector.get((data, error) => {
-    if (error) {
-      console.error(`\nError returned from GET request:\n${JSON.stringify(error)}`);
-      return callback(error);
-    }
-    console.log(`\nResponse returned from GET request:\n${JSON.stringify(data)}`);
-    return callback(data);
-      });
+      this.connector.post(callback);
     /**
      * Write the body for this function.
      * The function is a wrapper for this.connector's get() method.
