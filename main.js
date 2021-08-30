@@ -14,7 +14,7 @@ const ServiceNowConnector = require(path.join(__dirname, '/connector.js'));
  * assign it to constant EventEmitter. We will create a child class
  * from this class.
  */
-const EventEmitter = require('events').EventEmitter;
+const { EventEmitter } = require('events');
 
 /**
  * The ServiceNowAdapter class.
@@ -25,7 +25,6 @@ const EventEmitter = require('events').EventEmitter;
  *   class.
  */
 class ServiceNowAdapter extends EventEmitter {
-
   /**
    * Here we document the ServiceNowAdapter class' callback. It must follow IAP's
    *   data-first convention.
@@ -94,9 +93,30 @@ class ServiceNowAdapter extends EventEmitter {
    *   that handles the response.
    */
   healthcheck(callback) {
-    // We will build this method in a later lab. For now, it will emulate
-    // a healthy integration by emmitting ONLINE.
-    this.emitOnline();
+    try {
+      this.getRecord((result, error) => {
+        if (error) {
+          this.emitOffline();
+          log.error(
+            `ServiceNow: Instance ${this.id} errored. ${error && error.message}`
+          );
+          if (callback) {
+            return callback(null, error);
+          }
+        } else {
+          this.emitOnline();
+          log.debug(`ServiceNow: Instance ${this.id} health check successful`);
+          if (callback) {
+            return callback(result);
+          }
+        }
+      });
+    } catch (err) {
+      log.error(
+        `ServiceNow: Instance ${this.id} errored. ${err && err.message}`
+      );
+      return callback(null, err);
+    }
   }
 
   /**
@@ -136,7 +156,7 @@ class ServiceNowAdapter extends EventEmitter {
     this.emit(status, { id: this.id });
   }
 
-/**
+  /**
    * @memberof ServiceNowAdapter
    * @method getRecord
    * @summary Get ServiceNow Record
@@ -155,7 +175,7 @@ class ServiceNowAdapter extends EventEmitter {
           const parsedBody = JSON.parse(response.body);
           if (parsedBody && Array.isArray(parsedBody.result)) {
             return callback(
-              parsedBody.result.map(this.constructor.processTicketChange)
+              parsedBody.result.map(this.constructor.processChangeTicketRecord)
             );
           }
         }
@@ -169,7 +189,7 @@ class ServiceNowAdapter extends EventEmitter {
     }
   }
 
- /**
+  /**
    * @memberof ServiceNowAdapter
    * @method postRecord
    * @summary Create ServiceNow Record
@@ -187,7 +207,7 @@ class ServiceNowAdapter extends EventEmitter {
         if (response && typeof response === 'object' && response.body) {
           const parsedBody = JSON.parse(response.body);
           return callback(
-            this.constructor.processTicketChange(parsedBody.result)
+            this.constructor.processChangeTicketRecord(parsedBody.result)
           );
         }
         return callback({});
@@ -200,35 +220,26 @@ class ServiceNowAdapter extends EventEmitter {
     }
   }
 
- /**
-   * @memberof ServiceNowAdapter
-   * @method processTicketChange
-   * @summary Process recording of ticket change.
-   * @description Processes the recording of a ticket change.
-   *
-   * @param {ServiceNowAdapter~requestCallback} callback - The callback that
-   *   handles the response.
-   */
-   processRecordChange(callback) {
-     const {
-       number,
-       active,
-       priority,
-       description,
-       work_start,
-       work_end,
-       sys_id
-     } = record;
-     return {
-       change_ticket_number: number,
-       active,
-       priority,
-       description,
-       work_start,
-       work_end,
-       change_ticket_key: sys_id
-     };
-   }
+  static processChangeTicketRecord(record) {
+    const {
+      number,
+      active,
+      priority,
+      description,
+      work_start,
+      work_end,
+      sys_id
+    } = record;
+    return {
+      change_ticket_number: number,
+      active,
+      priority,
+      description,
+      work_start,
+      work_end,
+      change_ticket_key: sys_id
+    };
+  }
 }
 
 module.exports = ServiceNowAdapter;
