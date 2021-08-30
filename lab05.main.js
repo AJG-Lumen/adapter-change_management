@@ -84,38 +84,20 @@ class ServiceNowAdapter extends EventEmitter {
   }
 
   /**
- * @memberof ServiceNowAdapter
- * @method healthcheck
- * @summary Check ServiceNow Health
- * @description Verifies external system is available and healthy.
- *   Calls method emitOnline if external system is available.
- *
- * @param {ServiceNowAdapter~requestCallback} [callback] - The optional callback
- *   that handles the response.
- */
- healthcheck(callback) {
-    this.getRecord((result, error) => {
-        /**
-        * For this lab, complete the if else conditional
-        * statements that check if an error exists
-        * or the instance was hibernating. You must write
-        * the blocks for each branch.
-        */        
-        if (error) {
-            this.emitOffline();
-            log.error(`ServiceNow: Instance ${this.id} errored. ${error.message}`);
-            if (callback) {
-            return callback(null, error);
-            }
-        } else {
-            this.emitOnline();
-            log.debug(`ServiceNow: Instance ${this.id} health check successful`);
-            if (callback) {
-                return callback(result);
-            }
-        }
-    });
-}
+   * @memberof ServiceNowAdapter
+   * @method healthcheck
+   * @summary Check ServiceNow Health
+   * @description Verifies external system is available and healthy.
+   *   Calls method emitOnline if external system is available.
+   *
+   * @param {ServiceNowAdapter~requestCallback} [callback] - The optional callback
+   *   that handles the response.
+   */
+  healthcheck(callback) {
+    // We will build this method in a later lab. For now, it will emulate
+    // a healthy integration by emmitting ONLINE.
+    this.emitOnline();
+  }
 
   /**
    * @memberof ServiceNowAdapter
@@ -164,8 +146,14 @@ class ServiceNowAdapter extends EventEmitter {
    *   handles the response.
    */
   getRecord(callback) {
-    this.connector.get(callback);
-  }
+      this.connector.get(callback);
+    /**
+     * Write the body for this function.
+     * The function is a wrapper for this.connector's get() method.
+     * Note how the object was instantiated in the constructor().
+     * get() takes a callback function.
+     */
+  };
 
   /**
    * @memberof ServiceNowAdapter
@@ -177,8 +165,14 @@ class ServiceNowAdapter extends EventEmitter {
    *   handles the response.
    */
   postRecord(callback) {
-    this.connector.post(callback);
-  }
+      this.connector.post(callback);
+    /**
+     * Write the body for this function.
+     * The function is a wrapper for this.connector's get() method.
+     * Note how the object was instantiated in the constructor().
+     * get() takes a callback function.
+     */
+  };
 }
 
 module.exports = ServiceNowAdapter;
