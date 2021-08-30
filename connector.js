@@ -2,14 +2,6 @@ const request = require('request');
 
 const validResponseRegex = /(2\d\d)/;
 
-// Update this constant with your ServiceNow credentials
-const options = {
-  url: 'https://dev52920.service-now.com/',
-  username: 'admin',
-  password: 'Qt7NbS8rqHxS',
-  serviceNowTable: 'change_request'
-};
-
 /**
  * The ServiceNowConnector class.
  *
