@@ -136,7 +136,7 @@ class ServiceNowAdapter extends EventEmitter {
     this.emit(status, { id: this.id });
   }
 
-/**
+  /**
    * @memberof ServiceNowAdapter
    * @method getRecord
    * @summary Get ServiceNow Record
@@ -146,30 +146,16 @@ class ServiceNowAdapter extends EventEmitter {
    *   handles the response.
    */
   getRecord(callback) {
-    try {
-      this.connector.get((response, error) => {
-        if (error) {
-          return callback(null, error);
-        }
-        if (response && typeof response === 'object' && response.body) {
-          const parsedBody = JSON.parse(response.body);
-          if (parsedBody && Array.isArray(parsedBody.result)) {
-            return callback(
-              parsedBody.result.map(this.constructor.processTicketChange)
-            );
-          }
-        }
-        return callback(null);
-      });
-    } catch (err) {
-      log.error(
-        `ServiceNow: Instance ${this.id} errored. ${err && err.message}`
-      );
-      return callback(null, err);
-    }
-  }
+      this.connector.get(callback);
+    /**
+     * Write the body for this function.
+     * The function is a wrapper for this.connector's get() method.
+     * Note how the object was instantiated in the constructor().
+     * get() takes a callback function.
+     */
+  };
 
- /**
+  /**
    * @memberof ServiceNowAdapter
    * @method postRecord
    * @summary Create ServiceNow Record
@@ -179,56 +165,14 @@ class ServiceNowAdapter extends EventEmitter {
    *   handles the response.
    */
   postRecord(callback) {
-    try {
-      this.connector.post((response, error) => {
-        if (error) {
-          return callback(null, error);
-        }
-        if (response && typeof response === 'object' && response.body) {
-          const parsedBody = JSON.parse(response.body);
-          return callback(
-            this.constructor.processTicketChange(parsedBody.result)
-          );
-        }
-        return callback({});
-      });
-    } catch (err) {
-      log.error(
-        `ServiceNow: Instance ${this.id} errored. ${err && err.message}`
-      );
-      return callback(null, err);
-    }
-  }
-
- /**
-   * @memberof ServiceNowAdapter
-   * @method processTicketChange
-   * @summary Process recording of ticket change.
-   * @description Processes the recording of a ticket change.
-   *
-   * @param {ServiceNowAdapter~requestCallback} callback - The callback that
-   *   handles the response.
-   */
-   processRecordChange(callback) {
-     const {
-       number,
-       active,
-       priority,
-       description,
-       work_start,
-       work_end,
-       sys_id
-     } = record;
-     return {
-       change_ticket_number: number,
-       active,
-       priority,
-       description,
-       work_start,
-       work_end,
-       change_ticket_key: sys_id
-     };
-   }
+      this.connector.post(callback);
+    /**
+     * Write the body for this function.
+     * The function is a wrapper for this.connector's get() method.
+     * Note how the object was instantiated in the constructor().
+     * get() takes a callback function.
+     */
+  };
 }
 
 module.exports = ServiceNowAdapter;
